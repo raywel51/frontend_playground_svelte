@@ -6,7 +6,7 @@
  
  </script>
  
- <div class="max-w-xl mx-auto">
+ <div class="mx-auto">
    <table class="table">
      <thead>
        <tr>
