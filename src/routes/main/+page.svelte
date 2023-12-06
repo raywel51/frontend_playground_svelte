@@ -1,5 +1,10 @@
 <script lang="ts">
+import {onMount} from 'svelte';
 
+
+onMount(async () => {
+    document.title = 'LETMEIN: Smart Living and Workplace Platform';
+});
 </script>
 
 <style lang="less">
