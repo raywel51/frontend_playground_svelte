@@ -10,6 +10,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
+		"@iconify/svelte": "^3.1.6",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.27.4",
 		"autoprefixer": "^10.4.16",
@@ -26,7 +27,17 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@fortawesome/fontawesome-free": "^6.5.1",
+		"@svelteuidev/composables": "^0.15.4",
+		"@svelteuidev/core": "^0.15.4",
+		"@svelteuidev/dates": "^0.15.4",
+		"@svelteuidev/motion": "^0.15.4",
+		"@svelteuidev/preprocessors": "^0.15.4",
+		"@svelteuidev/prism": "^0.15.4",
 		"axios": "^1.6.2",
+		"dayjs": "^1.11.10",
+		"radix-icons-svelte": "^1.2.1",
+		"svelte-fa": "^3.0.4",
 		"svelte-routing": "^2.9.0"
 	}
 }

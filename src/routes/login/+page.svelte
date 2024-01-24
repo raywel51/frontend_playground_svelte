@@ -1,10 +1,9 @@
 <script lang="ts">
+    import { Modal, Group, Button } from '@svelteuidev/core';
     import NavBar from "../../component/NavBar.svelte";
     import Footer from "../../component/Footer.svelte";
     import {goto} from '$app/navigation';
     import {onMount} from 'svelte';
-    import axios from 'axios';
-
 
     let email = '';
     let password = '';
@@ -20,37 +19,56 @@
         document.getElementById('my_modal_5').showModal()
     }
 
+    let opened = false;
+  let modalContent = "Hello, this is the text inside the modal!";
+
+  function closeModal() {
+      opened = false;
+  }
     async function handleLogin() {
+
+
         const loginData = {
             username: email,
             password: password
         };
 
         try {
-            const response = await axios.post('https://raywel.ddns.net/api/v2/users/login', loginData, {
+
+            const response = await fetch('http://raywel.ddns.net:1660/v2/users/login', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify(loginData) // Convert data to JSON string before sending
             });
 
-            if (response.status === 200) {
-                const data = response.data;
-
-                sessionStorage.setItem('token', data.token);
-                console.log('Login successful');
-                console.log('Token:', data.token);
-
-                showDialog(data.message);
-
-                await new Promise(resolve => {
-                    setTimeout(resolve, 2000);
-                });
-
-                goto('/');
-            } else {
-                const errorMessage = response.data.message || 'Login failed';
-                showDialog(errorMessage);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // Handling 401 Unauthorized error
+                    const errorData = await response.json(); // Assuming error data is in JSON format
+                    const errorMessage = errorData.message; // Extract the error message
+                    throw new Error(`Unauthorized: ${errorMessage}`);
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
             }
+
+            const responseData = await response.json();
+            console.log(responseData)
+
+            sessionStorage.setItem('token', responseData['token']);
+            console.log('Login successful');
+            console.log('Token:', responseData['token']);
+
+            showDialog(responseData['message']);
+
+            await new Promise(resolve => {
+                setTimeout(resolve, 2000);
+            });
+
+            goto('/');
+
         } catch (error: any) {
             console.error('Error:', error);
             showDialog(error.toString());
@@ -58,6 +76,7 @@
     }
 
     onMount(() => {
+
         document.title = 'LETMEIN: Smart Living and Workplace Platform';
         const storedToken = sessionStorage.getItem('token');
         if (storedToken) {
@@ -121,6 +140,7 @@
             <div>
                 <button class="btn btn-primary">Login</button>
 
+
                 <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
                     <div class="modal-box">
                         <h3 class="font-bold text-lg">Hello!</h3>
@@ -133,15 +153,20 @@
                     </div>
                 </dialog>
 
+
             </div>
         </form>
     </div>
+
 </div>
+
+
 </body>
 
-
 <footer>
+
     <div class="footer">
         <Footer/>
     </div>
 </footer>
+

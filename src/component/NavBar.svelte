@@ -1,6 +1,20 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
+    import {onMount, beforeUpdate} from 'svelte';
     import {goto} from '$app/navigation';
+    import {Burger, Divider, Menu, Text, TextInput} from '@svelteuidev/core';
+    import {
+        Camera,
+        ChatBubble,
+        Exit,
+        FileText,
+        Gear,
+        GithubLogo,
+        MagnifyingGlass,
+        Trash,
+        Width
+    } from 'radix-icons-svelte';
+
+    let opened = false;
 
     let currentPath = '';
     let username = 'officeone66';
@@ -9,7 +23,15 @@
     const pathsToHide2 = ['/login2', '/otherpath2'];
 
     let shouldShowMenu = false;
+
     let menuType = ''; // Define a variable to determine menu type
+
+    let isSize = typeof window !== 'undefined' && window.innerWidth > 768;
+
+    const handleResize = () => {
+        console.log(window.innerWidth)
+        isSize = window.innerWidth > 1024;
+    }
 
     const getCurrentPath = () => {
         currentPath = window.location.pathname;
@@ -33,7 +55,24 @@
         goto('/login');
     }
 
-    onMount(getCurrentPath);
+    onMount(() => {
+        getCurrentPath()
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+            };
+        }
+    });
+
+    beforeUpdate(() => {
+        if (typeof window !== 'undefined') {
+            isSize = window.innerWidth > 1024;
+        }
+    });
+
 </script>
 
 <style lang="less">
@@ -53,36 +92,6 @@
         color: @textSelect;
     }
 
-    @media screen and (max-width: 768px) {
-        .navbar {
-            /* Example adjustments for smaller screens */
-            display: flex;
-            flex-direction: column;
-            padding: 10px; /* Adjust padding */
-        }
-
-        .menu {
-            /* Example adjustments for smaller screens */
-            display: flex;
-            flex-direction: column;
-            padding: 0; /* Modify padding */
-        }
-
-        .text_title,
-        .text_title_select {
-            /* Example adjustments for smaller screens */
-            padding: 8px; /* Adjust padding */
-        }
-
-        .logout-button {
-            /* Style the button to match your design */
-            /* ...other styles */
-            cursor: pointer; /* Ensure the pointer cursor for better indication */
-        }
-
-        /* You can add more specific adjustments for smaller screens as needed */
-    }
-
 </style>
 
 <div class="navbar main_color bg-base-100">
@@ -92,30 +101,52 @@
 
     {#if shouldShowMenu}
         {#if menuType === 'type1'}
-            <div class="flex-none">
-                <ul class="menu menu-horizontal px-1">
-                    <li class="text_title"><a href="/user">ประวัติการขอ QR</a></li>
-                    <li class="text_title_select"><a href="/users">ประวัติการขอ QR</a></li>
-                    <li class="text_title" on:click|preventDefault={handleLogout}><a>Login({username})</a></li>
-                </ul>
-            </div>
+            {#if isSize === true}
+                <div class="flex-none">
+                    <ul class="menu menu-horizontal px-1">
+                        <li class="text_title"><a href="/user">ประวัติการขอ QR</a></li>
+                        <li class="text_title_select"><a href="/users">ประวัติการขอ QR</a></li>
+                        <li class="text_title" on:click|preventDefault={handleLogout}><a>Login({username})</a></li>
+                    </ul>
+                </div>
+            {:else}
+                <div class="flex-none">
+                    <ul class="menu menu-horizontal px-1">
+
+                        <Menu>
+                            <Burger color="#ffffff" slot="control"
+                                    opened={opened}
+                                    on:click={() => (opened = !opened)}
+                            />
+
+                            <Menu.Item icon={FileText}>ประวัติการขอ QR</Menu.Item>
+                            <Divider/>
+
+                            <Menu.Item icon={GithubLogo} disabled>
+                                officeone59
+                            </Menu.Item>
+
+                            <Menu.Item color="red" icon={Exit} on:click={handleLogout}>Logout</Menu.Item>
+                        </Menu>
+
+                    </ul>
+                </div>
+            {/if}
         {/if}
 
         {#if menuType === 'type2'}
             <div class="flex-none">
                 <ul class="menu menu-horizontal px-1">
-                    <li class="text_title_select"><a href="/login">เช้าสู่ระบบ</a></li>
                 </ul>
             </div>
         {/if}
 
         <!-- Add other conditions for other menu types (type2, type3) as needed -->
-        {:else}
+    {:else}
         <div class="flex-none">
-                <ul class="menu menu-horizontal px-1">
-                    <li class="text_title_select"><a href="/login">เช้าสู่ระบบ</a></li>
-                </ul>
-            </div>
-            {/if}
+            <ul class="menu menu-horizontal px-1">
 
+            </ul>
+        </div>
+    {/if}
 </div>

@@ -5,5 +5,8 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		plugins: [sveltekit()],
+		server: {
+			port: 88,
+		 },
 	};
 });
